@@ -9,6 +9,11 @@ function Header() {
         alt="логотип"
         src={logo}
     />
+    <button
+    type='button'
+    className='header__auth'>
+        Войти
+    </button>
     </header>
     )
 }

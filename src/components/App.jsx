@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Header from './Header';
 import Footer from './Footer';
@@ -9,6 +10,7 @@ import api from '../utils/Api';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import Login from './Login';
 
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
@@ -19,6 +21,8 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const [userAuth, setUserAuth] = useState(false);
+  console.dir(currentUser)
 
   useEffect(() => {
     api.getUserInfo()
@@ -126,7 +130,15 @@ function App() {
       <div className="App">
       <>
         <div className="page">
-          <Header />
+          <Header
+          userAuth={userAuth}
+          />
+          <Switch>
+          <Route
+            path="/"
+            exact
+            element={
+              <ProtectedRoute userAuth={userAuth}>
           <Main 
             onEditProfile = {handleEditProfileClick}
             onAddPlace = {handleAddPlaceClick}
@@ -138,6 +150,20 @@ function App() {
             handleCardDelete = {handleCardDelete}
 
           />
+          </ProtectedRoute>
+          }
+          />
+          <Route
+            path="/"
+            element={
+              userAuth ? <Redirect to="/" /> : <Redirect to="/login" />
+            }
+          />
+          <Route path="/login">
+            <Login />
+          </Route>
+
+          </Switch>
           <Footer />
         </div>
 

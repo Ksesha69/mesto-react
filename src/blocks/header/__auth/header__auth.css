@@ -1,0 +1,11 @@
+.header__auth {
+    border: none;
+    background-color: #000;
+    cursor: pointer;
+    color: #fff;
+    transition: opacity 0.2s;
+}
+
+.header__auth:hover {
+    opacity: 0.6;
+}
