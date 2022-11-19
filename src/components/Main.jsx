@@ -4,6 +4,7 @@ import Card from "./Card";
 import profileButton from '../images/Vector.svg';
 import imageButton from '../images/plus.svg';
 
+<<<<<<< HEAD
 function Main({ 
     onEditAvatar, 
     onEditProfile, 
@@ -16,6 +17,32 @@ function Main({
 
     const currentUser = useContext(CurrentUserContext);
 
+=======
+function Main({ onEditAvatar, onEditProfile, onAddPlace, onHandleCardClick }) {
+    const [userName, setUserName] = useState();
+    const [userDescription, setUserDescription] = useState();
+    const [userAvatar, setUserAvatar] = useState();
+    const [cards, setCards] = useState([]);
+
+    useEffect(() => {
+        api.getUserInfo()
+        .then((userData) => {
+            setUserAvatar(userData.avatar);
+            setUserName(userData.name);
+            setUserDescription(userData.about);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+        api.getInitialCard()
+        .then((res) => {
+            setCards(res);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    })
+>>>>>>> parent of de5ca3c (2-inter)
     
     return (
         <main>
