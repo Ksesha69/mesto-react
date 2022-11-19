@@ -1,28 +1,45 @@
 import { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { Route, Switch, Redirect } from 'react-router-dom';
+=======
+import { Route, Routes, Navigate } from 'react-router-dom';
+>>>>>>> 05802e5909635bcf5cb6f8d99b087e650d6f86b6
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Header from './Header';
 import Footer from './Footer';
 import Main from './Main';
-import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import api from '../utils/Api';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import Login from './Login';
+<<<<<<< HEAD
+=======
+import ProtectedRoute from './ProtectedRoute';
+import Register from './Register';
+import InfoTooltip from './InfoTooltip';
+import auth from '../utils/Auth';
+import React from 'react';
+
+>>>>>>> 05802e5909635bcf5cb6f8d99b087e650d6f86b6
 
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false);
   const [isImagePopupOpen, setImagePopupOpen] = useState(false);
-  const [isConfirmationPopupOpen, setConfirmationPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
   const [userAuth, setUserAuth] = useState(false);
+<<<<<<< HEAD
   console.dir(currentUser)
+=======
+  const [isInfoTooltipOpen, setInfoTooltipOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState(false);
+  const [requestFailed, setRequestFailed] = useState(false);
+>>>>>>> 05802e5909635bcf5cb6f8d99b087e650d6f86b6
 
   useEffect(() => {
     api.getUserInfo()
@@ -111,8 +128,58 @@ function App() {
     setImagePopupOpen(true);
   }
 
-  function handleConfirmationClick() {
-    setConfirmationPopupOpen(true);
+  function handleTokenCheck(){
+    if (localStorage.getItem('jwt')){
+      const token = localStorage.getItem('jwt');
+    // проверяем токен пользователя
+    auth.checkToken(token)
+    .then((res) => {
+          setUserAuth(true);
+          setUserEmail(res.data.email);
+          Route.history.push("/");
+      })
+      .catch(() => {
+        setUserAuth(false);
+      });
+    }}
+
+    useEffect(() => {
+      handleTokenCheck();
+    }, []);
+
+  function handleRegistration(e, {email, password}) {
+    e.preventDefault();
+    auth.signUp({email, password})
+    .then(() => {
+      setRequestFailed(false);
+      setInfoTooltipOpen(true);
+    })
+    .then((res) => {
+      if(res.statusCode !== 400){
+        Route.history.push('/login');
+      }
+    })
+    .catch(() => {
+      setRequestFailed(true);
+      setInfoTooltipOpen(true);
+    });
+  }
+
+  function handleLogin(e, email, password) {
+    e.preventDefault();
+    auth.signIn(email, password)
+    .then((res) => {
+      localStorage.setItem("jwt", res.token);
+    })
+    .then((res) => {
+      if(res.statusCode !== 400){
+        Route.history.push('/');
+      }
+    })
+    .catch(() => {
+      setRequestFailed(true);
+      setInfoTooltipOpen(true);
+    });
   }
 
   function closeAllPopups() {
@@ -120,7 +187,7 @@ function App() {
     setEditAvatarPopupOpen(false);
     setAddPlacePopupOpen(false);
     setImagePopupOpen(false);
-    setConfirmationPopupOpen(false);
+    setInfoTooltipOpen(false);
     setSelectedCard({});
   }
 
@@ -133,8 +200,13 @@ function App() {
           <Header
           userAuth={userAuth}
           />
+<<<<<<< HEAD
           <Switch>
           <Route
+=======
+          <Routes>
+            <Route
+>>>>>>> 05802e5909635bcf5cb6f8d99b087e650d6f86b6
             path="/"
             exact
             element={
@@ -144,13 +216,12 @@ function App() {
             onAddPlace = {handleAddPlaceClick}
             onEditAvatar = {handleEditAvatarClick}
             onHandleCardClick = {handleCardClick}
-            onConformitionClick = {handleConfirmationClick}
             cards = {cards}
             handleCardLike = {handleCardLike}
             handleCardDelete = {handleCardDelete}
-
           />
           </ProtectedRoute>
+<<<<<<< HEAD
           }
           />
           <Route
@@ -165,6 +236,30 @@ function App() {
 
           </Switch>
           <Footer />
+=======
+            }
+            />
+          <Route
+            path="*"
+            exact
+            element={
+              userAuth ? <Navigate to="/" /> : <Navigate to="/sign-up" />
+            }
+          />
+          <Route 
+          exact 
+          path="/register" 
+          element={<Register onSubmit={handleRegistration} />
+          } 
+          />
+          <Route 
+          exact 
+          path="/login" 
+          element={<Login onSubmit={handleLogin} />} />
+
+          </Routes>
+          {userAuth && <Footer />}
+>>>>>>> 05802e5909635bcf5cb6f8d99b087e650d6f86b6
         </div>
 
         <EditProfilePopup 
@@ -188,15 +283,11 @@ function App() {
           onClose={closeAllPopups}
           isOpen={isImagePopupOpen}
         />
-        <PopupWithForm
-          name="delete"
-          title="Вы уверены?" 
-          className="popup__form"
-          buttonText="Да"
-          isOpen={isConfirmationPopupOpen}
-          onClose={closeAllPopups}
-        >
-        </PopupWithForm>
+        <InfoTooltip 
+          isOpen={isInfoTooltipOpen} 
+          onClose={closeAllPopups} 
+          requestFailed={requestFailed}
+        />
         </>
       </div>
     </CurrentUserContext.Provider>

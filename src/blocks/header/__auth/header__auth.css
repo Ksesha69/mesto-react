@@ -1,4 +1,5 @@
 .header__auth {
+<<<<<<< HEAD
     border: none;
     background-color: #000;
     cursor: pointer;
@@ -8,4 +9,8 @@
 
 .header__auth:hover {
     opacity: 0.6;
+=======
+    display: flex;
+    gap: 26px;
+>>>>>>> 05802e5909635bcf5cb6f8d99b087e650d6f86b6
 }
